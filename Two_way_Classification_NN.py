@@ -16,7 +16,7 @@ a classification line is clear enough.
 
 """
 
-##THIS FUCKING MAKES THE COMPUTER SPEAK LMFAO
+# This will make your computer speak
 from win32com.client import Dispatch
 speak = Dispatch("SAPI.SpVoice")
 
@@ -34,7 +34,7 @@ print("Preprocessing data...")
 
 # Please chage PATH to where you have downloaded the dataset
 # Training data
-flower_table = pd.read_excel(r'C:\Users\jairp\Desktop\BackUP\AI and Machine Learning\Flower_Table.xlsx')
+flower_table = pd.read_excel(r'C:\Users\jairp\Desktop\BackUP\AI and Machine Learning\Flower_Table_Training_Set.xlsx')
 flowersdf = DataFrame(flower_table,columns = ['length','width','color'])
 print(flowersdf, "\n")
 

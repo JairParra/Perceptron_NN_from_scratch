@@ -1,4 +1,4 @@
-# Simple_Neural_Network_Classification
+# Perceptron (NN) from scratch: Flower Classification
 
 Repository for the Simple two-way classification Neural Network project. 
 

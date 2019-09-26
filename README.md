@@ -15,11 +15,19 @@ and visualization, as well as function implementation.
 The code hass been based on tutorials by giant_neural_network 
 on youtube, and further modified so it speaks along the process, reports some stats, 
 outputs more visualizations and also has more comments. 
-The original data was also extended to a 100 "random" observations such that 
-a classification line is clear enough. 
+Note that the original data was artificially created, and this beginner example only 
+scratches the top of what a real Neural Network implementation looks like. 
+
+Have fun learning!! 
 
 @author: Hair Parra
 @Copyright: Attribution-NonCommercial-NoDerivatives 4.0 International
             https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 """
+
+## Gradient Descent
+![](figs/Gradient_Descent_error.png)
+
+## Separation Hyperplane
+![](figs/Separation_hyperplane.png)

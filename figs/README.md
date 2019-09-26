@@ -1,0 +1,2 @@
+# figs
+- Output figures

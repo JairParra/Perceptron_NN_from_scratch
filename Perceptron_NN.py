@@ -1,9 +1,16 @@
 # -*- coding: utf-8 -*-
+# Simple_Neural_Network_Classification
+
 """
 Created on Fri Dec 21 22:34:52 2018
 
-The following is an elementary manual implementation of a classifier
-using only a single neuron and gradient descent optimization. 
+The "flower classification problem"is an elementary implementation of a classifier
+using only a single neuron and gradient descent optimization, all from scratch. 
+No precoded packages such a tensor flow or similar were used. 
+win32.com.client was used to make the computer speak (to add a humourous side to it). 
+Other packacges include matplotlib, numpy, pandas and random for data manipulation 
+and visualization, as well as function implementation. 
+
 The code hass been based on tutorials by giant_neural_network 
 on youtube, and further modified so it speaks along the process, reports some stats, 
 outputs more visualizations and also has more comments. 
@@ -15,6 +22,9 @@ a classification line is clear enough.
             https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 """
+# ********************************************************************************
+
+### *** 1. Imports *** ### 
 
 # This will make your computer speak
 from win32com.client import Dispatch
@@ -26,21 +36,21 @@ import pandas as pd
 from pandas import DataFrame
 import random
 
-speak.speak("Welcome to the classification program")
-print("Welcome to the classification program")
+# *********************************************************************************
 
-speak.speak("Preprocessing data")
+print("Welcome to the classification program")
+speak.speak("Welcome to the classification program")
+
 print("Preprocessing data...")
+speak.speak("Preprocessing data")
 
 # Please chage PATH to where you have downloaded the dataset
 # Training data
-flower_table = pd.read_excel(r'C:\Users\jairp\Desktop\BackUP\AI and Machine Learning\Flower_Table_Training_Set.xlsx')
-flowersdf = DataFrame(flower_table,columns = ['length','width','color'])
+flowersdf = pd.read_excel('../data_raw/Flower_Table_Training_Set.xlsx')
 print(flowersdf, "\n")
 
 # Test data 
-test_table = pd.read_excel(r'C:\Users\jairp\Desktop\BackUP\AI and Machine Learning\Flower_Table_Test_Set.xlsx')
-testdf = DataFrame(flower_table,columns = ['length','width','color'])
+test_table = pd.read_excel('../data_raw/Flower_Table_Test_Set.xlsx')
 
 flowers = [] # List of flowers: each entry has the format [color,length,width]
 test_set = []
@@ -60,8 +70,6 @@ del flowers[8:9] # redundant
 
 print('Printing flowers\n',flowers)
 print('\nMystery flower: ', mystery_flower)
-print()
-
 
 #   we can assign random values to the weights at the beginning
 w1 = np.random.randn() 
@@ -77,7 +85,6 @@ def dsigmoid_dx(x):
     return sigmoid(x)* (1-sigmoid(x))
 
 
-
 # Plot of the sigmoid function and its derivative
 plt.figure(1)
 X = np.linspace(-6,6,100) # domain 
@@ -86,6 +93,7 @@ plt.plot(X,dsigmoid_dx(X), c='b') # (axis,Y)
 plt.title('Sigmoid function')
 plt.ylabel('Y')
 plt.xlabel('Values')
+plt.savefig('../figs/Sigmoid_and_derivative.png')
 
 
 # scatter plot of the data
@@ -101,6 +109,7 @@ for i in range(len(flowers)):
     if point[2] == 0:
         color = "b"
     plt.scatter(point[0],point[1], c=color)
+plt.savefig('../figs/flowers_scatter.png')
     
 # More advanced function for displaying the data 
 def vis_data(data, title):
@@ -121,20 +130,18 @@ def vis_data(data, title):
 
 # Training loop 
     
-learning_rate = .2 # learning rate
+learning_rate = .25 # learning rate
 costs = []
 norm_costs = []
-iterations = 1000
+iterations = 2000
 
-speak.speak("Learning rate has been set to {} percent".format(learning_rate*100))
 print("Learning rate = {}%".format(str(learning_rate*100)))
+speak.speak("Learning rate has been set to {} percent".format(learning_rate*100))
 
-
-speak.speak("Running {} iterations of the algorithm".format(iterations))
 print("Running {} iterations of the algorithm".format(iterations))
-    
+speak.speak("Running {} iterations of the algorithm".format(iterations))  
+  
 # train
-
 def train(iterations = 10000, learning_rate = 0.1):
     #random init of weights
     w1 = np.random.randn()
@@ -160,8 +167,8 @@ def train(iterations = 10000, learning_rate = 0.1):
         if(cost > max_cost):
             max_cost = cost
         
-        # print the cost over all data points every 100 iters
-        if i % 100 == 0:
+        # print the cost over all data points every 50 iters
+        if i % 5 == 0:
             c = 0
             for j in range(len(flowers)):
                 p = flowers[j]
@@ -169,6 +176,7 @@ def train(iterations = 10000, learning_rate = 0.1):
                 c += np.square(p_pred - p[2])
             costs.append(c)
         
+        # Gradient descent algorithm
         dcost_dpred = 2 * (pred - target)
         dpred_dz = dsigmoid_dx(z)
         
@@ -182,6 +190,7 @@ def train(iterations = 10000, learning_rate = 0.1):
         dcost_dw2 = dcost_dz * dz_dw2
         dcost_db = dcost_dz * dz_db
         
+        # Updated rules 
         w1 = w1 - learning_rate * dcost_dw1
         w2 = w2 - learning_rate * dcost_dw2
         b = b - learning_rate * dcost_db
@@ -190,6 +199,8 @@ def train(iterations = 10000, learning_rate = 0.1):
         
         completed = round((i*100)/iterations, 2)
         print("{}% completed".format(completed))
+        
+    print("100% completed")
         
     return costs, w1, w2, b, final_cost, max_cost
 
@@ -223,16 +234,20 @@ def test(test_set):
     
     return accuracy
 
-test_accuracy = round(test(test_set),2) # have to correct this 
+test_accuracy = round(test(test_set),2) 
 
 print("Model accuracy on the test set: {}%".format(test_accuracy,2))
 speak.speak("The model fits the data with {}% accuracy".format(test_accuracy))
 
+np_costs = np.array(costs) # will convert this to costs
+np_costs = (np_costs*100)/max(costs)
+
 plt.figure(3)
-plt.plot(costs)
+plt.plot(np_costs)
 plt.title('Gradient descend')
 plt.xlabel('Iterations')
-plt.ylabel('Error')
+plt.ylabel('Error %')
+plt.savefig('../figs/Gradient_Descent_error.png')
 
 # seeing model predictions 
 
@@ -261,10 +276,8 @@ def which_flower(length, width):
     
 
 # Check five random observations
-
-which_flower(mystery_flower[0],mystery_flower[1])
-speak.speak("Testing for five randomly measured flowers")
 print("Testing...")
+speak.speak("Testing for five randomly measured flowers")
     
 for i in range(5): 
     print("Iteration:" + str(i))
@@ -289,7 +302,10 @@ for x in np.linspace(0, 8, 20):
 # and the other half red.. nicely predicting each data point!
 
 vis_data(flowers, "Flowers Data: Training Set")
+plt.savefig('../figs/Separation_hyperplane.png')
 
+
+print("\nOutputting visualizations\n")
 speak.speak("Outputting visualizations")
 speak.speak("End of the program")
 
@@ -299,20 +315,3 @@ print("Number of data = {}".format(len(flowers)))
 print("# Iterations = {}".format(iterations))
 print("Learning rate = {}".format(learning_rate))
 print("Accuracy = {}%".format(test_accuracy))
-
-"""
-Created on Fri Dec 21 22:34:52 2018
-
-The following is an elementary manual implementation of a classifier
-using only a single neuron and gradient descent optimization. 
-The code hass been based on tutorials by giant_neural_network 
-on youtube, and further modified so it speaks along the process, reports some stats, 
-outputs more visualizations and also has more comments. 
-The original data was also extended to a 100 "random" observations such that 
-a classification line is clear enough. 
-
-@author: Hair Parra
-@Copyright: Attribution-NonCommercial-NoDerivatives 4.0 International
-            https://creativecommons.org/licenses/by-nc-nd/4.0/
-
-"""
